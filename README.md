@@ -33,7 +33,7 @@ age, sex, bmi, children, region, charges → predice → smoker (yes/no)
 ### Variables
 
 | Variable | Tipo | Descripción |
-|---|---|---|
+|:---|:---|:---|
 | `age` | int64 | Edad del asegurado |
 | `sex` | object | Sexo (male / female) |
 | `bmi` | float64 | Índice de masa corporal |
@@ -72,13 +72,13 @@ Optimización de hiperparámetros
 Evaluación final en test set
   · Classification Report + Matriz de Confusión + Curvas ROC
 
-
+---
 ## 📊 Resultados del Benchmark
 
 ### Benchmark inicial (sin tunear)
 
 | Modelo | Accuracy | Precision | Recall | F1 | AUC-Test |
-|---|---|---|---|---|---|
+|:---|:---|:---|:---|:---|:---|
 | 🏆 **Random Forest (200)** | 0.966 | 0.911 | **0.927** | 0.919 | **0.994** |
 | Decision Tree (d=5) | **0.970** | **0.961** | 0.891 | **0.925** | 0.961 |
 | Logistic Regression | 0.929 | 0.909 | 0.727 | 0.808 | 0.991 |
