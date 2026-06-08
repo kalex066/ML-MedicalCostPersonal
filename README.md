@@ -71,7 +71,7 @@ Optimización de hiperparámetros
       ↓
 Evaluación final en test set
   · Classification Report + Matriz de Confusión + Curvas ROC
----
+
 
 ## 📊 Resultados del Benchmark
 
