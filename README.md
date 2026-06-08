@@ -88,13 +88,13 @@ Evaluación final en test set
 
 ### ¿Por qué gana Random Forest?
 
-**1. AUC-Test = 0.994** — el más alto. Mide la capacidad de separar clases en todos los umbrales posibles, no solo con el umbral por defecto (0.5). Si se toma un fumador y un no-fumador al azar, el modelo los ordena correctamente el 99.4% de las veces.
+**1. AUC-Test = 0.994** — Mide la capacidad de separar clases en todos los umbrales posibles, no solo con el umbral por defecto (0.5). Si se toma un fumador y un no-fumador al azar, el modelo los ordena correctamente el 99.4% de las veces.
 
-**2. Recall = 0.927** — crítico para este problema. Un fumador no detectado (FN) implica que la aseguradora le cobra prima de no-fumador, generando pérdida directa. Random Forest captura 3.6 puntos porcentuales más de fumadores reales que Decision Tree.
+**2. Recall = 0.927** — Un fumador no detectado (FN) implica que la aseguradora le cobra prima de no-fumador, generando pérdida directa. Random Forest captura 3.6 puntos porcentuales más de fumadores reales que Decision Tree.
 
 **3. Sin overfitting** — AUC-CV = 0.990 ≈ AUC-Test = 0.994. El modelo generaliza correctamente.
 
-**4. Decision Tree tiene mejor F1 (0.925 vs 0.919)** pero lo logra siendo más conservador (Precision alta, Recall bajo). En detección de fraude, el FN es el error más costoso — ese tradeoff es desfavorable.
+**4. Decision Tree tiene mejor F1 (0.925 vs 0.919)** pero lo logra siendo más conservador (Precision alta, Recall bajo).
 
 **5. KNN colapsó** — Recall = 0.036, F1 = 0.066. Con clases desbalanceadas (79/21), el voto de k=11 vecinos tiende a la clase mayoritaria. La Accuracy de 0.787 es una ilusión: el modelo simplemente predice "no fumador" casi siempre.
 
@@ -148,14 +148,11 @@ pip install pandas numpy matplotlib seaborn scikit-learn scipy jupyter
 ### 1. Target: `smoker`, no `charges`
 `charges` es una consecuencia calculada de las demás variables — predecirla sería invertir la fórmula actuarial. `smoker` es una característica real del individuo con aplicación de negocio directa.
 
-### 2. Datos sucios simulados
-El dataset original es limpio. Se introdujeron deliberadamente: nulos (~8% en variables numéricas), outliers extremos (BMI=85, age=150, charges=500,000) y errores de capitalización ("MALE", "FEMALE") para practicar técnicas reales de limpieza.
+### 2. Data Limpia
+El dataset original es limpio. 
 
 ### 3. Winsorización en lugar de eliminación
 Los outliers se capan al percentil 1–99 en lugar de eliminar filas. Con solo 1,338 registros, cada fila vale.
-
-### 4. `OneHotEncoder` dentro del Pipeline
-Las columnas `sex` y `region` se codifican dentro del `ColumnTransformer`, no antes del split. Hacerlo manualmente antes del `train_test_split` introduciría data leakage porque el encoder vería la distribución completa de categorías antes de separar train y test.
 
 ### 5. Métricas: F1 y AUC, no Accuracy
 Con 79.5% de no-fumadores, un modelo que predice siempre "no fumador" alcanza 79.5% de accuracy — completamente inútil. F1 y AUC son las métricas correctas.
@@ -167,7 +164,6 @@ Con 79.5% de no-fumadores, un modelo que predice siempre "no fumador" alcanza 79
 - **Solo 1,338 registros**: el modelo puede ser frágil ante cambios en la distribución demográfica de nuevos asegurados.
 - **`charges` como feature**: en un escenario real, la aseguradora fija `charges` *después* de conocer `smoker`. En producción, esta variable no estaría disponible en el momento de la predicción para nuevos clientes. El modelo debe reentrenarse sin `charges` o con un valor estimado.
 - **No causalidad**: el modelo detecta patrones estadísticos, no causa. Un BMI alto no *causa* que alguien sea fumador — simplemente coocurre en los datos.
-- **Sin SMOTE**: el desbalance 79/21 se maneja via métricas correctas (F1, AUC) pero no se aplicó oversampling. Agregar `class_weight='balanced'` o SMOTE podría mejorar el Recall de la clase minoritaria.
 
 ---
 
